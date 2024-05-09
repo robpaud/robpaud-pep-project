@@ -1,9 +1,16 @@
 package Controller;
 
-import DAO.MessageDAO;
+import Model.Account;
+import Model.Message;
+import Service.MessageService;
+import Service.AccountService;
+
+import java.util.List;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
-import io.javalin.http.Handler;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -16,36 +23,100 @@ public class SocialMediaController {
      * suite must receive a Javalin object from this method.
      * @return a Javalin app object which defines the behavior of the Javalin controller.
      */
+    MessageService messageService;
+    AccountService accountService;
+
+    public SocialMediaController(){
+        this.accountService = new AccountService();
+        this.messageService = new MessageService();
+    }
+
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("/register", ctx -> {
-            ctx.status(200);
-        });
-        app.get("/login", ctx -> {
-            ctx.status(200);
-            ctx.json("Account");
-        });
-        app.get("/messages", ctx -> {
-            ctx.status(200);
-        });
-        app.get("/messages/{message_id}", (Handler) MessageDAO.fetchById);
-        
-        app.get("/accounts/{account_id}/messages", ctx -> {
-            ctx.status(200);
-            ctx.json("account_id");
-        });
-
+        app.get("/register", this::registerAccountHandler);
+        app.get("/login", this::loginAccountHandler);
+        app.get("/messages", this::createMessageHandler);
+        app.get("/messages", this::getAllMessagesHandler);
+        app.get("/messages/{message_id}", this::getMessageByIdHandler);
+        app.get("/messages/{message_id}", this::deleteMessageByIdHandler);
+        app.get("/messages/{message_id}", this::updateMessageByIdHandler);
 
         return app;
     }
 
-    /**
-     * This is an example handler for an example endpoint.
-     * @param context The Javalin Context object manages information about both the HTTP request and response.
-     */
-    private void exampleHandler(Context context) {
-        context.json("sample text");
+    
+    //The Javalin Context object manages information about both the HTTP request and response.
+    private void registerAccountHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(ctx.body(), Account.class);
+        Account addedAccount = accountService.registerAccount(account);
+        if(addedAccount!=null){
+            ctx.json(mapper.writeValueAsString(addedAccount));
+        }else{
+            ctx.status(400);
+        }
     }
 
+    private void loginAccountHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(ctx.body(), Account.class);
+        Account loginAccount = accountService.loginAccount(account);
+        if(loginAccount!=null){
+            ctx.json(mapper.writeValueAsString(loginAccount));
+        }else{
+            ctx.status(401);
+        }
+    }
 
+    private void createMessageHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(ctx.body(), Message.class);
+        Message createdMessage = messageService.createMessage(message);
+        if(createdMessage!=null){
+            ctx.json(mapper.writeValueAsString(createdMessage));
+        }else{
+            ctx.status(400);
+        }
+    }
+
+    private void getAllMessagesHandler(Context ctx) throws JsonProcessingException {
+        List<Message> messages = messageService.getAllMessages();
+        ctx.json(messages);
+    }
+
+    private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(ctx.body(), Message.class);
+        Message retrievedMessage = messageService.getMessageById(message);
+        if(retrievedMessage!=null){
+            ctx.json(mapper.writeValueAsString(retrievedMessage));
+        }else{
+            ctx.json(mapper.writeValueAsString(""));
+        }
+    }
+
+    private void deleteMessageByIdHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(ctx.body(), Message.class);
+        Message deletedMessage = messageService.deleteMessageById(message);
+        if(deletedMessage!=null){
+            ctx.json(mapper.writeValueAsString(deletedMessage));
+            ctx.status(200);
+        }else{
+            ctx.json(mapper.writeValueAsString(""));
+            ctx.status(200);
+        }
+    }
+
+    private void updateMessageByIdHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(ctx.body(), Message.class);
+        Message updatedMessage = messageService.updateMessageById(message);
+        if(updatedMessage!=null){
+            ctx.json(mapper.writeValueAsString(updatedMessage));
+            ctx.status(200);
+        }else{
+            ctx.status(400);
+        }
+    }
 }
