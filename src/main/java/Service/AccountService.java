@@ -23,11 +23,12 @@ public class AccountService {
             }
         }
         return null;
+        
     }
 
     public Account loginAccount(Account account){
         //if username already exists
-        if(accountDAO.getAccountByUsername(account.getUsername())==account)
+        if(account.equals(accountDAO.getAccountByUsername(account.getUsername())))
             { return accountDAO.loginAccount(account); }
         else
             { return null; }

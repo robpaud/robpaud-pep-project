@@ -100,8 +100,8 @@ public class MessageDAO {
             preparedStatement.executeUpdate();
             //connection.commit();
             return message;
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
+       }catch(SQLException e){
+           System.out.println(e.getMessage());
         }
         return null;
     }

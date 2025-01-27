@@ -35,7 +35,10 @@ public class MessageService {
     }
     //delete message by message_id
     public Message deleteMessageById(Message message){
-        return messageDAO.deleteMessageById(message);
+        if(message.equals(messageDAO.getMessageById(message.getMessage_id())))
+        { return messageDAO.deleteMessageById(message); }
+        else 
+        { return null; }
     }
     /* update message by message_id if the message_id already exists 
     and the new message_text is not blank and is not over 255 characters*/
@@ -43,6 +46,7 @@ public class MessageService {
         if(messageDAO.getMessageById(message.getMessage_id())==message){
             if(message.getMessage_text() != "" && message.getMessage_text().length() < 255){
                 return messageDAO.updateMessageById(message);
+                
             }
         }
         return null;

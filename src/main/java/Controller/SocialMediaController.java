@@ -33,13 +33,13 @@ public class SocialMediaController {
 
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("/register", this::registerAccountHandler);
-        app.get("/login", this::loginAccountHandler);
-        app.get("/messages", this::createMessageHandler);
+        app.post("/register", this::registerAccountHandler);
+        app.post("/login", this::loginAccountHandler);
+        app.post("/messages", this::createMessageHandler);
         app.get("/messages", this::getAllMessagesHandler);
         app.get("/messages/{message_id}", this::getMessageByIdHandler);
-        app.get("/messages/{message_id}", this::deleteMessageByIdHandler);
-        app.get("/messages/{message_id}", this::updateMessageByIdHandler);
+        app.delete("/messages/{message_id}", this::deleteMessageByIdHandler);
+        app.patch("/messages/{message_id}", this::updateMessageByIdHandler);
 
         return app;
     }
@@ -51,7 +51,8 @@ public class SocialMediaController {
         Account account = mapper.readValue(ctx.body(), Account.class);
         Account addedAccount = accountService.registerAccount(account);
         if(addedAccount!=null){
-            ctx.json(mapper.writeValueAsString(addedAccount));
+            ctx.json(mapper.writeValueAsString(addedAccount.toString()));
+            ctx.status(200);
         }else{
             ctx.status(400);
         }
@@ -62,7 +63,8 @@ public class SocialMediaController {
         Account account = mapper.readValue(ctx.body(), Account.class);
         Account loginAccount = accountService.loginAccount(account);
         if(loginAccount!=null){
-            ctx.json(mapper.writeValueAsString(loginAccount));
+            ctx.json(mapper.writeValueAsString(loginAccount.toString()));
+            ctx.status(200);
         }else{
             ctx.status(401);
         }
@@ -73,7 +75,7 @@ public class SocialMediaController {
         Message message = mapper.readValue(ctx.body(), Message.class);
         Message createdMessage = messageService.createMessage(message);
         if(createdMessage!=null){
-            ctx.json(mapper.writeValueAsString(createdMessage));
+            ctx.json(mapper.writeValueAsString(createdMessage.toString()));
         }else{
             ctx.status(400);
         }
@@ -89,7 +91,7 @@ public class SocialMediaController {
         Message message = mapper.readValue(ctx.body(), Message.class);
         Message retrievedMessage = messageService.getMessageById(message);
         if(retrievedMessage!=null){
-            ctx.json(mapper.writeValueAsString(retrievedMessage));
+            ctx.json(mapper.writeValueAsString(retrievedMessage.toString()));
         }else{
             ctx.json(mapper.writeValueAsString(""));
         }
@@ -100,7 +102,7 @@ public class SocialMediaController {
         Message message = mapper.readValue(ctx.body(), Message.class);
         Message deletedMessage = messageService.deleteMessageById(message);
         if(deletedMessage!=null){
-            ctx.json(mapper.writeValueAsString(deletedMessage));
+            ctx.json(mapper.writeValueAsString(deletedMessage.toString()));
             ctx.status(200);
         }else{
             ctx.json(mapper.writeValueAsString(""));
@@ -113,7 +115,7 @@ public class SocialMediaController {
         Message message = mapper.readValue(ctx.body(), Message.class);
         Message updatedMessage = messageService.updateMessageById(message);
         if(updatedMessage!=null){
-            ctx.json(mapper.writeValueAsString(updatedMessage));
+            ctx.json(mapper.writeValueAsString(updatedMessage.toString()));
             ctx.status(200);
         }else{
             ctx.status(400);
