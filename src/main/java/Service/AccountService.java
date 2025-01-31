@@ -17,18 +17,16 @@ public class AccountService {
 
     //if username is not blank, password > 4, and username does not already exist, register account
     public Account registerAccount(Account account){
-        if(account.getUsername() != "" && account.getPassword().length() > 4){
-            if(accountDAO.getAccountByUsername(account.getUsername())==null){
-                return accountDAO.registerAccount(account);
-            }
+        if(accountDAO.getAccountByUsername(account.getUsername()) == null){
+            if(account.getUsername() != "" && account.getPassword().length() > 4)
+            { return accountDAO.registerAccount(account); }
         }
         return null;
-        
     }
 
     public Account loginAccount(Account account){
         //if username already exists
-        if(account.equals(accountDAO.getAccountByUsername(account.getUsername())))
+        if(accountDAO.getAccountByUsername(account.getUsername()) == null)
             { return accountDAO.loginAccount(account); }
         else
             { return null; }

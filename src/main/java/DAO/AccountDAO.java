@@ -18,11 +18,12 @@ public class AccountDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, account.getUsername());
             preparedStatement.setString(2, account.getPassword());
+
             preparedStatement.executeUpdate();
             ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
             if(pkeyResultSet.next()){
-                String generated_account_username = (String) pkeyResultSet.getString(1);
-                return new Account(generated_account_username, account.getPassword());
+                int generated_account_id = (int) pkeyResultSet.getInt(1);
+                return new Account(generated_account_id, account.getUsername(), account.getPassword());
             }
         }catch(SQLException e){
             System.out.println(e.getMessage());
