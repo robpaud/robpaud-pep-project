@@ -122,9 +122,11 @@ public class MessageDAO {
             String sql = "DELETE FROM Message WHERE message_id=?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, message.getMessage_id());
-            preparedStatement.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
             //connection.commit();
-            return message;
+            
+            if(rowsAffected > 0)
+                {return getMessageById(message.getMessage_id());}
        }catch(SQLException e){
            System.out.println(e.getMessage());
         }
@@ -139,8 +141,10 @@ public class MessageDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, message.getMessage_text());
             preparedStatement.setInt(2, message.getMessage_id());
-            preparedStatement.executeUpdate();
-            return message;
+            int rowsAffected = preparedStatement.executeUpdate();
+            
+            if(rowsAffected > 0)
+                { return getMessageById(message.getMessage_id()); }
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
