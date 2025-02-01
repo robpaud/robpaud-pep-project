@@ -92,7 +92,7 @@ public class SocialMediaController {
         Message message = mapper.readValue(ctx.body(), Message.class);
         Message retrievedMessages = messageService.getMessageById(message);
         if(retrievedMessages!=null){
-            ctx.json(mapper.writeValueAsString(retrievedMessages.toString()));
+            ctx.json(mapper.writeValueAsString(retrievedMessages));
             ctx.status(200);
         }else{
             ctx.json(mapper.writeValueAsString(""));

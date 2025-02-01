@@ -15,7 +15,7 @@ public class MessageDAO {
     public Message getAccountByUsername(int posted_by){
         Connection connection = ConnectionUtil.getConnection();
         try {
-            String sql = "SELECT * FROM message WHERE posted_by=?;";
+            String sql = "SELECT * FROM Message WHERE posted_by=?;";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, posted_by);
             ResultSet rs = preparedStatement.executeQuery();
@@ -37,7 +37,7 @@ public class MessageDAO {
         Connection connection = ConnectionUtil.getConnection();
         try {
             //Write SQL logic here
-            String sql = "INSERT INTO message VALUES (?, ?, ?, ?);" ;
+            String sql = "INSERT INTO Message VALUES (?, ?, ?, ?);" ;
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, message.getMessage_id());
             preparedStatement.setInt(2, message.getPosted_by());
@@ -51,12 +51,12 @@ public class MessageDAO {
         return null;
     }
 
-    //retrieve all messages from Message table
+    //retrieves all messages from Message table
     public List<Message> getAllMessages(){
         Connection connection = ConnectionUtil.getConnection();
         List<Message> messages = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM message;";
+            String sql = "SELECT * FROM Message;";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
@@ -72,12 +72,12 @@ public class MessageDAO {
         return messages;
     }
 
-    //retrieve all messages from account_id table
+    //retrieves all messages from a particular user
     public List<Message> getAllMessagesByUser(Account account){
         Connection connection = ConnectionUtil.getConnection();
         List<Message> messages = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM message WHERE posted_by = (SELECT account_id FROM account WHERE account_id=?);";
+            String sql = "SELECT * FROM Message WHERE posted_by = (SELECT account_id FROM account WHERE account_id= ? );";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1,account.getAccount_id());
             ResultSet rs = preparedStatement.executeQuery();
@@ -94,10 +94,11 @@ public class MessageDAO {
         return messages;
     }
 
+    //gets messages based on message_id
     public Message getMessageById(int message_id){
         Connection connection = ConnectionUtil.getConnection();
         try {
-            String sql = "SELECT * FROM message WHERE message_id=?;";
+            String sql = "SELECT * FROM Message WHERE message_id= ?;";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, message_id);
             ResultSet rs = preparedStatement.executeQuery();
@@ -114,10 +115,11 @@ public class MessageDAO {
         return null;
     }
 
+    //deletes a message based on message_id
     public Message deleteMessageById(Message message){
         Connection connection = ConnectionUtil.getConnection();
         try {
-            String sql = "DELETE FROM message WHERE message_id=?;";
+            String sql = "DELETE FROM Message WHERE message_id=?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, message.getMessage_id());
             preparedStatement.executeUpdate();
@@ -129,10 +131,11 @@ public class MessageDAO {
         return null;
     }
 
+    //updates a message based on the message_id
     public Message updateMessageById(Message message){
         Connection connection = ConnectionUtil.getConnection();
         try {
-            String sql = "UPDATE message SET message_text=? WHERE message_id=?;";
+            String sql = "UPDATE Message SET message_text=? WHERE message_id=?;";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, message.getMessage_text());
             preparedStatement.setInt(2, message.getMessage_id());

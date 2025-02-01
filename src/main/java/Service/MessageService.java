@@ -29,10 +29,12 @@ public class MessageService {
         }
         return null;
     }
+
     //retrieve all messages
     public List<Message> getAllMessages(){
         return messageDAO.getAllMessages();
     }
+
     //get message by message_id
     public Message getMessageById(Message message){
         if(message.equals(messageDAO.getMessageById(message.getMessage_id())))
@@ -52,7 +54,7 @@ public class MessageService {
 
     //delete message by message_id
     public Message deleteMessageById(Message message){
-        if(message.equals(messageDAO.getMessageById(message.getMessage_id())))
+        if(messageDAO.getMessageById(message.getMessage_id())!=null)
         { return messageDAO.deleteMessageById(message); }
         else 
         { return null; }
